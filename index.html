@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f8fa">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>手机速查</title>
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">ERIC'S QUICK REFERENCE</p>
+        <h1>手机速查</h1>
+        <p class="count" id="count">正在读取内容…</p>
+      </div>
+      <span class="brand-mark" aria-hidden="true">速</span>
+    </header>
+
+    <label class="search-box" for="search">
+      <span aria-hidden="true">⌕</span>
+      <input id="search" type="search" inputmode="search" autocomplete="off" placeholder="搜索标题或分类" aria-label="搜索速查内容">
+    </label>
+
+    <section aria-labelledby="category-title">
+      <div class="section-heading">
+        <h2 id="category-title">按主题浏览</h2>
+        <button class="text-button" id="show-all" type="button" hidden>查看全部</button>
+      </div>
+      <div class="category-grid" id="categories" aria-live="polite"></div>
+    </section>
+
+    <section aria-labelledby="recent-title">
+      <div class="section-heading">
+        <h2 id="recent-title">最近更新</h2>
+      </div>
+      <div class="recent-list" id="recent" aria-live="polite"></div>
+    </section>
+
+    <p class="empty" id="empty" hidden>没有找到相关内容</p>
+    <p class="error" id="error" hidden>目录暂时无法读取，请稍后刷新。</p>
+  </main>
+  <script type="module" src="assets/site.js"></script>
+</body>
+</html>
