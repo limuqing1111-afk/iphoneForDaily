@@ -29,4 +29,6 @@ node --test
 
 ## iPhone
 
-GitHub Pages 上线后，用 Safari 打开首页，点“分享”→“添加到主屏幕”。以后只需点击“手机速查”图标。
+首页地址：<https://limuqing1111-afk.github.io/iphoneForDaily/>
+
+用 Safari 打开首页，点“分享”→“添加到主屏幕”。以后只需点击“手机速查”图标。
