@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>每日饮食决策与记录</title>
+  <style>
+    :root {
+      --paper:#f5f2eb; --card:#fffdf8; --ink:#20231f; --muted:#687066;
+      --line:#dedbcf; --green:#245a43; --green-soft:#e4efe8;
+      --gold:#a56c22; --gold-soft:#f6ead4; --red:#9b453d; --red-soft:#f7e5e2;
+      --shadow:0 16px 42px rgba(54,49,38,.08);
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0; color:var(--ink); background:
+        radial-gradient(circle at top right, #e5eee5 0, transparent 28rem), var(--paper);
+      font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+      line-height:1.65;
+    }
+    .wrap { width:min(1060px,calc(100% - 28px)); margin:0 auto; padding:36px 0 64px; }
+    header { padding:24px 4px 30px; }
+    .eyebrow { color:var(--green); font-size:12px; font-weight:700; letter-spacing:.14em; }
+    h1 { margin:8px 0 10px; font-size:clamp(30px,6vw,50px); line-height:1.08; letter-spacing:-.04em; }
+    .subtitle { color:var(--muted); max-width:720px; margin:0; }
+    .verdict {
+      display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:center;
+      background:var(--green); color:white; border-radius:20px; padding:22px 24px; box-shadow:var(--shadow);
+    }
+    .clock { font-size:32px; }
+    .verdict strong { display:block; font-size:21px; }
+    .verdict p { margin:4px 0 0; color:#dfece4; }
+    section { margin-top:24px; }
+    .section-head { display:flex; justify-content:space-between; gap:16px; align-items:end; margin:38px 2px 14px; }
+    h2 { margin:0; font-size:22px; letter-spacing:-.02em; }
+    .hint { color:var(--muted); font-size:13px; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:20px; box-shadow:var(--shadow); }
+    .card h3 { margin:0 0 8px; font-size:17px; }
+    .card p { margin:5px 0; color:var(--muted); }
+    .tag { display:inline-block; border-radius:999px; padding:3px 9px; font-size:12px; font-weight:700; margin-bottom:10px; }
+    .tag.green { background:var(--green-soft); color:var(--green); }
+    .tag.gold { background:var(--gold-soft); color:var(--gold); }
+    .tag.red { background:var(--red-soft); color:var(--red); }
+    ul { margin:10px 0 0; padding-left:19px; }
+    li { margin:5px 0; }
+    .matrix { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .matrix .card { min-height:184px; }
+    .meal-title { display:flex; justify-content:space-between; gap:10px; align-items:center; }
+    .meal-code { color:var(--green); font-size:28px; font-weight:800; }
+    .macro { margin-top:13px; padding-top:12px; border-top:1px solid var(--line); font-size:13px; color:var(--muted); }
+    .night-rule { background:#242823; color:#f5f2eb; }
+    .night-rule p,.night-rule .macro { color:#cbd0c8; border-color:#484d47; }
+    form { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+    label { display:flex; flex-direction:column; gap:6px; color:var(--muted); font-size:12px; font-weight:700; }
+    input,select,textarea,button {
+      width:100%; border:1px solid var(--line); border-radius:11px; background:white;
+      color:var(--ink); padding:11px 12px; font:inherit;
+    }
+    textarea { min-height:44px; resize:vertical; }
+    .span2 { grid-column:span 2; }
+    .span4 { grid-column:1/-1; }
+    button { cursor:pointer; font-weight:700; }
+    .primary { background:var(--green); color:white; border-color:var(--green); }
+    .secondary { background:transparent; }
+    .actions { display:flex; gap:10px; }
+    .recommendation { background:var(--green-soft); color:var(--green); border-radius:12px; padding:11px 13px; font-weight:700; }
+    .table-wrap { overflow:auto; border:1px solid var(--line); border-radius:14px; margin-top:14px; }
+    table { width:100%; border-collapse:collapse; min-width:760px; background:white; font-size:13px; }
+    th,td { padding:11px 12px; text-align:left; border-bottom:1px solid var(--line); white-space:nowrap; }
+    th { color:var(--muted); font-size:11px; letter-spacing:.05em; background:#f4f3ee; }
+    tr:last-child td { border-bottom:0; }
+    .empty { color:var(--muted); text-align:center; padding:22px; }
+    .supplements { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .supplements b { display:block; margin-bottom:5px; }
+    .quick-panel { padding:24px; }
+    .quick-panel h2 { font-size:25px; margin-bottom:4px; }
+    .quick-intro { color:var(--muted); margin:0 0 20px; }
+    .quick-questions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+    .quick-question b { display:block; margin-bottom:8px; }
+    .toggle { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .toggle input { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
+    .toggle label {
+      display:block; padding:14px 10px; border:1px solid var(--line); border-radius:12px;
+      background:#f7f5ef; color:var(--ink); text-align:center; font-size:14px; cursor:pointer;
+    }
+    .toggle input:checked + label { background:var(--green); color:white; border-color:var(--green); box-shadow:0 5px 16px rgba(36,90,67,.2); }
+    .quick-results { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:18px; }
+    .result-card { border-radius:16px; padding:18px; background:var(--green-soft); }
+    .result-card.dinner { background:#242823; color:white; }
+    .result-label { font-size:12px; font-weight:800; letter-spacing:.1em; color:var(--green); }
+    .result-card.dinner .result-label { color:#9bc0aa; }
+    .result-card h3 { margin:5px 0 6px; font-size:20px; }
+    .result-card p { margin:0; color:var(--muted); }
+    .result-card.dinner p { color:#cbd0c8; }
+    .details-box { margin-top:24px; }
+    .details-box > summary {
+      cursor:pointer; list-style:none; padding:15px 18px; border:1px solid var(--line);
+      border-radius:14px; background:rgba(255,253,248,.78); font-weight:700; text-align:center;
+    }
+    .details-box > summary::-webkit-details-marker { display:none; }
+    .details-box[open] > summary { background:var(--green-soft); color:var(--green); }
+    footer { color:var(--muted); font-size:12px; margin-top:30px; padding:14px 2px; }
+    @media (max-width:760px) {
+      .grid,.matrix,.supplements,.quick-questions,.quick-results { grid-template-columns:1fr; }
+      form { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .span4 { grid-column:1/-1; }
+      .verdict { grid-template-columns:1fr; }
+    }
+    @media (max-width:470px) {
+      form { grid-template-columns:1fr; }
+      .span2,.span4 { grid-column:1; }
+      .wrap { width:min(100% - 18px,1060px); padding-top:18px; }
+      .card { padding:17px; }
+    }
+    @media print {
+      body { background:white; }
+      .wrap { width:100%; padding:0; }
+      .card,.verdict { box-shadow:none; }
+      #recording { display:none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div class="eyebrow">减脂保肌 · 每日决策页</div>
+      <h1>不计算每一口，<br>只判断两个变量。</h1>
+      <p class="subtitle">选择今天的两个情况，马上得到下午和晚餐安排。</p>
+    </header>
+
+    <section id="quick-decision" class="card quick-panel">
+      <h2>今天怎么吃？</h2>
+      <p class="quick-intro">只选两项，不用计算热量。</p>
+      <div class="quick-questions">
+        <div class="quick-question" id="quick-training">
+          <b>① 今天有力量训练吗？</b>
+          <div class="toggle">
+            <input type="radio" name="quick-training" id="qt" value="T" checked><label for="qt">有力量训练</label>
+            <input type="radio" name="quick-training" id="qr" value="R"><label for="qr">没有力量训练</label>
+          </div>
+        </div>
+        <div class="quick-question" id="quick-lunch">
+          <b>② 午餐吃得怎么样？</b>
+          <div class="toggle">
+            <input type="radio" name="quick-lunch" id="qn" value="N" checked><label for="qn">正常 / 健康</label>
+            <input type="radio" name="quick-lunch" id="qh" value="H"><label for="qh">吃多 / 很油</label>
+          </div>
+        </div>
+      </div>
+      <div class="quick-results">
+        <article class="result-card">
+          <div class="result-label">下午</div>
+          <h3 id="afternoon-result">不用强制加餐</h3>
+          <p id="afternoon-detail">如果饿，高蛋白酸奶 200 g 或坚果 15 g，二选一。</p>
+        </article>
+        <article class="result-card dinner">
+          <div class="result-label">晚餐</div>
+          <h3 id="dinner-result">A 或 B</h3>
+          <p id="dinner-detail">健康外食；不想外食就吃完整燕麦蛋白餐。</p>
+        </article>
+      </div>
+    </section>
+
+    <details class="details-box">
+      <summary>查看详细方案与历史记录</summary>
+
+    <div class="verdict">
+      <div class="clock">◷</div>
+      <div>
+        <strong>20:30–21:00 吃燕麦晚餐，23:00 睡觉：可以。</strong>
+        <p>有约 2 小时消化时间。控制在 350–570 kcal，少油、少坚果、不辛辣；若出现反酸或胃胀，把晚餐减量或提前。</p>
+      </div>
+    </div>
+
+    <section>
+      <div class="section-head"><h2>两个固定变量</h2><span class="hint">先判断，再选晚餐</span></div>
+      <div class="grid">
+        <article class="card">
+          <span class="tag green">变量 1</span>
+          <h3>力量训练日 T / 非力量日 R</h3>
+          <p><b>T：</b>训练前 30 分钟吃香蕉 100 g，或白吐司 1 片＋半根香蕉。</p>
+          <p><b>R：</b>不需要训练前加餐，早餐蛋白不减，碳水略少。</p>
+        </article>
+        <article class="card">
+          <span class="tag gold">变量 2</span>
+          <h3>午餐正常 N / 午餐吃多 H</h3>
+          <p><b>N：</b>约 1.5 掌肉＋1 拳米饭＋2 拳蔬菜，吃完不撑。</p>
+          <p><b>H：</b>米饭多、油炸肥肉、明显油汁、甜饮或吃到撑，出现两项即算 H。</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head"><h2>四种情况怎么吃</h2><span class="hint">午餐 H 优先级最高</span></div>
+      <div class="matrix">
+        <article class="card">
+          <span class="tag green">T + N</span>
+          <h3>力量训练＋午餐正常</h3>
+          <p>晚餐选 <b>A 健康外食</b>，或 <b>B 完整燕麦蛋白餐</b>。</p>
+          <div class="macro">训练日正常吃，不需要因为减脂故意饿着。</div>
+        </article>
+        <article class="card">
+          <span class="tag red">T + H</span>
+          <h3>力量训练＋午餐吃多</h3>
+          <p>晚餐直接选 <b>C 轻燕麦蛋白餐</b>，保留蛋白，减少额外脂肪与碳水。</p>
+          <div class="macro">不要完全跳过晚餐。</div>
+        </article>
+        <article class="card">
+          <span class="tag green">R + N</span>
+          <h3>非力量日＋午餐正常</h3>
+          <p>选 <b>A</b>，米饭控制半拳；或选 <b>B</b>，不额外加水果。</p>
+          <div class="macro">蛋白质保持不变，只略减碳水。</div>
+        </article>
+        <article class="card">
+          <span class="tag red">R + H</span>
+          <h3>非力量日＋午餐吃多</h3>
+          <p>晚餐选 <b>C 轻燕麦蛋白餐</b>，当天坚果跳过。</p>
+          <div class="macro">第二天正常吃，不做报复性节食。</div>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head"><h2>三个固定晚餐</h2><span class="hint">不用临时计算</span></div>
+      <div class="grid">
+        <article class="card">
+          <div class="meal-title"><h3>A · 健康外食</h3><span class="meal-code">A</span></div>
+          <ul>
+            <li>熟鱼、虾、鸡肉或瘦牛肉 150–180 g</li>
+            <li>熟米饭 100–150 g</li>
+            <li>蔬菜 2 拳，少浇汁、不喝油汤</li>
+          </ul>
+          <div class="macro">约 500–650 kcal · 蛋白质 35–45 g</div>
+        </article>
+        <article class="card night-rule">
+          <div class="meal-title"><h3>B · 完整燕麦蛋白餐</h3><span class="meal-code">B</span></div>
+          <ul>
+            <li>高蛋白燕麦 1 袋（35 g）</li>
+            <li>牛奶 250 ml＋蛋白粉 1 勺</li>
+            <li>水煮蛋 1 个＋香蕉或苹果 1 个</li>
+          </ul>
+          <div class="macro">约 500–570 kcal · 蛋白质 42–46 g</div>
+        </article>
+        <article class="card">
+          <div class="meal-title"><h3>C · 轻燕麦蛋白餐</h3><span class="meal-code">C</span></div>
+          <ul>
+            <li>高蛋白燕麦 1 袋（35 g）</li>
+            <li>牛奶 250 ml＋蛋白粉 1 勺</li>
+            <li>黄瓜或小番茄；不加鸡蛋、水果和坚果</li>
+          </ul>
+          <div class="macro">约 350–410 kcal · 蛋白质 35–38 g</div>
+        </article>
+        <article class="card">
+          <span class="tag gold">燕麦每袋</span>
+          <h3>35 g 营养</h3>
+          <p>128 kcal · 蛋白质 5.1 g · 脂肪 2.6 g · 碳水 18.9 g · 膳食纤维 4.2 g</p>
+          <p>燕麦不是完整蛋白餐，必须搭配蛋白粉和牛奶。</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head"><h2>晚上游泳时</h2><span class="hint">避免临下水吃太饱</span></div>
+      <article class="card">
+        <p><b>距离游泳 60–90 分钟：</b>吃燕麦 1 袋＋牛奶；游泳结束后喝蛋白粉。</p>
+        <p><b>如果只能在游泳后 20:30–21:00 吃：</b>直接选 B 或 C，慢慢吃，23:00 睡觉仍有约 2 小时消化时间。</p>
+      </article>
+    </section>
+
+    <section id="recording">
+      <div class="section-head"><h2>每日记录</h2><span class="hint">保存在当前浏览器</span></div>
+      <article class="card">
+        <form id="daily-form">
+          <label>日期<input id="date" type="date" required></label>
+          <label>体重 kg<input id="weight" type="number" step="0.1" min="40" max="200" placeholder="82.0"></label>
+          <label>当天类型<select id="training"><option value="T">T · 力量训练</option><option value="R">R · 非力量日</option></select></label>
+          <label>午餐判断<select id="lunch"><option value="N">N · 正常健康</option><option value="H">H · 吃多或很油</option></select></label>
+          <label>早餐<select id="breakfast"><option value="✓">✓ · 蛋白达标</option><option value="△">△ · 蛋白不足</option></select></label>
+          <label>蛋白粉<select id="protein"><option value="0">0 勺</option><option value="1">1 勺</option></select></label>
+          <label>坚果<select id="nuts"><option value="0">0 g</option><option value="15">15 g</option><option value="20">20 g</option></select></label>
+          <label>实际晚餐<select id="dinner"><option value="A">A · 健康外食</option><option value="B">B · 完整燕麦蛋白餐</option><option value="C">C · 轻燕麦蛋白餐</option></select></label>
+          <div id="recommendation" class="recommendation span4">建议晚餐：A 或 B</div>
+          <label class="span4">备注<textarea id="note" placeholder="例如：午餐回锅肉较油；训练力量正常"></textarea></label>
+          <div class="actions span4">
+            <button class="primary" type="submit">保存今天</button>
+            <button class="secondary" id="export" type="button">导出 CSV</button>
+            <button class="secondary" id="clear" type="button">清空记录</button>
+          </div>
+        </form>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>日期</th><th>体重</th><th>T/R</th><th>早餐</th><th>午餐</th><th>晚餐</th><th>蛋白粉</th><th>坚果</th><th>备注</th></tr></thead>
+            <tbody id="records"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section>
+      <div class="section-head"><h2>固定补剂</h2><span class="hint">避免重复叠加</span></div>
+      <div class="supplements">
+        <article class="card"><b>鱼油</b><span>每日 1 粒，EPA 690 mg＋DHA 310 mg，随早餐或午餐。</span></article>
+        <article class="card"><b>复合维生素</b><span>按标签每日 4 粒，可早餐 2 粒、晚餐 2 粒。</span></article>
+        <article class="card"><b>暂不叠加</b><span>单独 D3＋K2 和镁暂停；Tebonin 仅按医疗建议。</span></article>
+      </div>
+    </section>
+
+    <footer>记录重点：早餐蛋白是否达标、午餐是否吃多、晚餐是否按规则收回来。每天称重，只看 7 天平均趋势。</footer>
+    </details>
+  </main>
+
+  <script>
+    const KEY = 'eric-diet-records-v1';
+    const $ = id => document.getElementById(id);
+    const fields = ['date','weight','training','lunch','breakfast','protein','nuts','dinner','note'];
+    const QUICK = {
+      TN: {
+        afternoon:['不用强制加餐','如果饿，高蛋白酸奶 200 g 或坚果 15 g，二选一。'],
+        dinner:['A 或 B','健康外食；不想外食就吃完整燕麦蛋白餐。']
+      },
+      TH: {
+        afternoon:['不吃坚果','不饿就不吃；真饿可用水冲半勺至 1 勺蛋白粉。'],
+        dinner:['C · 轻燕麦蛋白餐','燕麦 35 g＋牛奶 250 ml＋蛋白粉 1 勺＋低油蔬菜。']
+      },
+      RN: {
+        afternoon:['按饥饿决定','饿就吃坚果 15 g 或无糖酸奶 200 g，二选一。'],
+        dinner:['A（少饭）或 B（无水果）','外食米饭半拳；燕麦餐则不额外加香蕉或苹果。']
+      },
+      RH: {
+        afternoon:['不安排加餐','喝水或无糖茶；真饿才用水冲半勺蛋白粉。'],
+        dinner:['C · 轻燕麦蛋白餐','燕麦 35 g＋牛奶 250 ml＋蛋白粉 1 勺＋低油蔬菜。']
+      }
+    };
+
+    function updateQuickDecision() {
+      const training = document.querySelector('input[name="quick-training"]:checked').value;
+      const lunch = document.querySelector('input[name="quick-lunch"]:checked').value;
+      const result = QUICK[training + lunch];
+      $('afternoon-result').textContent = result.afternoon[0];
+      $('afternoon-detail').textContent = result.afternoon[1];
+      $('dinner-result').textContent = result.dinner[0];
+      $('dinner-detail').textContent = result.dinner[1];
+      $('training').value = training;
+      $('lunch').value = lunch;
+      if (lunch === 'H') $('dinner').value = 'C';
+      updateRecommendation();
+    }
+
+    function recommendedDinner(training, lunch) {
+      if (lunch === 'H') return 'C · 轻燕麦蛋白餐';
+      return training === 'T' ? 'A 健康外食 或 B 完整燕麦蛋白餐' : 'A（半拳米饭）或 B（不加水果）';
+    }
+
+    function updateRecommendation() {
+      const text = recommendedDinner($('training').value, $('lunch').value);
+      $('recommendation').textContent = `建议晚餐：${text}`;
+      if ($('lunch').value === 'H') $('dinner').value = 'C';
+    }
+
+    function loadRecords() {
+      try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
+      catch { return []; }
+    }
+
+    function saveRecords(records) { localStorage.setItem(KEY, JSON.stringify(records)); }
+
+    function render() {
+      const rows = loadRecords().sort((a,b) => b.date.localeCompare(a.date));
+      $('records').innerHTML = rows.length ? rows.map(r => `<tr>
+        <td>${escapeHtml(r.date)}</td><td>${escapeHtml(r.weight || '—')}</td><td>${escapeHtml(r.training)}</td>
+        <td>${escapeHtml(r.breakfast)}</td><td>${escapeHtml(r.lunch)}</td><td>${escapeHtml(r.dinner)}</td>
+        <td>${escapeHtml(r.protein)}</td><td>${escapeHtml(r.nuts)} g</td><td>${escapeHtml(r.note || '')}</td>
+      </tr>`).join('') : '<tr><td class="empty" colspan="9">还没有记录，从今天开始即可。</td></tr>';
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    }
+
+    $('daily-form').addEventListener('submit', event => {
+      event.preventDefault();
+      const record = Object.fromEntries(fields.map(id => [id, $(id).value.trim()]));
+      const records = loadRecords().filter(r => r.date !== record.date);
+      records.push(record);
+      saveRecords(records);
+      render();
+    });
+
+    $('training').addEventListener('change', updateRecommendation);
+    $('lunch').addEventListener('change', updateRecommendation);
+    document.querySelectorAll('input[name="quick-training"],input[name="quick-lunch"]').forEach(input => input.addEventListener('change', updateQuickDecision));
+    $('clear').addEventListener('click', () => {
+      if (confirm('确定清空当前浏览器里的全部饮食记录吗？')) {
+        localStorage.removeItem(KEY); render();
+      }
+    });
+    $('export').addEventListener('click', () => {
+      const records = loadRecords();
+      if (!records.length) return alert('还没有可以导出的记录。');
+      const headers = fields;
+      const csv = [headers, ...records.map(r => headers.map(h => r[h] || ''))]
+        .map(row => row.map(v => `"${String(v).replaceAll('"','""')}"`).join(','))
+        .join('\n');
+      const blob = new Blob(['\ufeff' + csv], {type:'text/csv;charset=utf-8'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = '饮食记录.csv'; a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    $('date').value = new Date().toISOString().slice(0,10);
+    updateQuickDecision();
+    render();
+  </script>
+</body>
+</html>
