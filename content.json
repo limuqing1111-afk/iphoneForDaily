@@ -1,5 +1,12 @@
 [
   {
+    "title": "洗衣洗烘速查",
+    "category": "生活",
+    "slug": "laundry-guide",
+    "path": "pages/laundry-guide/",
+    "updatedAt": "2026-09-06T12:35:56.498Z"
+  },
+  {
     "title": "每日饮食决策与记录",
     "category": "健康",
     "slug": "daily-diet",

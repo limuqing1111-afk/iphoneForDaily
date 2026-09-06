@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f1e8">
+  <title>洗衣洗烘速查</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17211c;
+      --muted: #667067;
+      --paper: #f5f1e8;
+      --card: #fffdf8;
+      --line: #ddd6ca;
+      --green: #155f49;
+      --green-soft: #e4f0e9;
+      --amber: #9b4d12;
+      --amber-soft: #fff0dc;
+      --red: #992e2e;
+      --red-soft: #fbe8e5;
+      --blue-soft: #eaf0f4;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 85% 0, rgba(21,95,73,.11), transparent 28rem),
+        var(--paper);
+      line-height: 1.65;
+    }
+    main { width: min(100% - 28px, 720px); margin: 0 auto; padding: 24px 0 64px; }
+    header { padding: 12px 4px 20px; }
+    .eyebrow { margin: 0 0 6px; color: var(--green); font-weight: 750; letter-spacing: .06em; font-size: .78rem; }
+    h1 { margin: 0; font-size: clamp(1.85rem, 8vw, 3.1rem); line-height: 1.08; letter-spacing: -.035em; }
+    .sub { margin: 10px 0 0; color: var(--muted); font-size: .93rem; }
+    .alert, .card, details {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,253,248,.94);
+      box-shadow: 0 8px 26px rgba(59,48,30,.055);
+    }
+    .alert { padding: 17px; margin-bottom: 22px; border-color: #edc7bd; background: var(--red-soft); }
+    .alert h2 { color: var(--red); margin: 0 0 6px; font-size: 1.08rem; }
+    .alert p { margin: 0; }
+    .alert strong { color: #702020; }
+    .schedule { margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: rgba(255,255,255,.62); }
+    section { margin-top: 28px; }
+    .section-title { margin: 0 2px 12px; font-size: 1.22rem; }
+    .stack { display: grid; gap: 14px; }
+    .card { overflow: hidden; }
+    .card-head { display: flex; gap: 12px; align-items: center; padding: 16px 17px 12px; }
+    .num { display: grid; place-items: center; flex: 0 0 34px; height: 34px; color: white; background: var(--green); border-radius: 50%; font-weight: 800; }
+    .card h3 { margin: 0; font-size: 1.08rem; }
+    .card .meta { color: var(--muted); font-size: .82rem; }
+    .recipe { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin: 0; background: var(--line); border-top: 1px solid var(--line); }
+    .recipe div { padding: 11px 14px; background: var(--card); }
+    dt { color: var(--muted); font-size: .72rem; }
+    dd { margin: 1px 0 0; font-weight: 750; }
+    .steps { margin: 0; padding: 14px 19px 17px 38px; }
+    .steps li + li { margin-top: 6px; }
+    .tip { margin: 0 16px 16px; padding: 10px 12px; border-radius: 11px; background: var(--green-soft); color: #164c3c; font-size: .9rem; }
+    .warning { background: var(--amber-soft); color: #713709; }
+    details { margin-top: 12px; padding: 0 16px; }
+    summary { cursor: pointer; padding: 15px 0; font-weight: 750; }
+    details[open] summary { border-bottom: 1px solid var(--line); }
+    details .inside { padding: 10px 0 15px; }
+    details p, details ul { margin-top: 6px; margin-bottom: 6px; }
+    .do-not { display: grid; gap: 9px; }
+    .do-not div { padding: 12px 14px; border-radius: 12px; background: var(--blue-soft); }
+    .footer { color: var(--muted); font-size: .76rem; margin: 30px 4px 0; }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--green-soft); color: var(--green); font-weight: 700; font-size: .75rem; }
+    @media (max-width: 390px) {
+      main { width: min(100% - 20px, 720px); padding-top: 15px; }
+      .recipe { grid-template-columns: 1fr 1fr; }
+      .recipe div { padding-inline: 11px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">ELECTROLUX ULTIMATECARE 300</p>
+      <h1>洗衣洗烘速查</h1>
+      <p class="sub">EWW8024D3WB · 洗涤 8kg / 烘干 5kg</p>
+    </header>
+
+    <aside class="alert">
+      <h2>你的固定作息：06:30装衣，20:30取衣</h2>
+      <p><strong>怕皱的衣服卡着回家时间完成；不怕皱的可以提前完成。</strong></p>
+      <div class="schedule">
+        <strong>早晨统一操作</strong><br>
+        选好程序后先看屏幕显示的程序时长，再反复按“预约”，让“程序时长＋预约等待”接近<strong>约14小时</strong>。例如程序显示3小时，就预约约11小时，预计接近20:30完成。
+      </div>
+      <p class="sub">提醒：运行期间无人看管存在电器、漏水和烘干加热风险；以下按你已决定自行承担该风险来排程。</p>
+    </aside>
+
+    <section>
+      <h2 class="section-title">先看完成时间</h2>
+      <div class="do-not">
+        <div><strong>有衬衣、西裤：</strong>设置预约，尽量接近20:30完成；回家立即取出、抖开、挂起。</div>
+        <div><strong>袜子、运动服、浴巾：</strong>不在意褶皱，可以提前完成；只要已经彻底烘干，回家再取。</div>
+        <div><strong>短袖：</strong>最好接近回家完成；若提前完成，回来后抖开即可。</div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">最常用的三套操作</h2>
+      <div class="stack">
+        <article class="card">
+          <div class="card-head">
+            <span class="num">1A</span>
+            <div><h3>日常衣物 · 不怕皱批次</h3><div class="meta">每2～3天 · 运动服、普通短袖</div></div>
+          </div>
+          <dl class="recipe">
+            <div><dt>旋钮</dt><dd>混合</dd></div>
+            <div><dt>温度</dt><dd>30℃</dd></div>
+            <div><dt>模式</dt><dd>洗涤＋烘干</dd></div>
+            <div><dt>烘干</dt><dd>储藏干</dd></div>
+          </dl>
+          <ol class="steps">
+            <li>检查口袋，拉好拉链。</li>
+            <li>先把<strong>1颗凝珠放到空滚筒最里面</strong>，再放衣服。</li>
+            <li>按“模式 洗涤/烘干”切换到洗涤＋烘干。</li>
+            <li>按“烘干程度”选择储藏干。</li>
+            <li>早晨06:30装衣，可直接启动或预约提前完成。</li>
+            <li>20:30回家取出；确认完全干燥后再收纳。</li>
+          </ol>
+          <p class="tip">运动服、普通短袖：不开蒸汽。出汗特别多可改40℃；日常无需消毒液。</p>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <span class="num">1B</span>
+            <div><h3>日常衣物 · 怕皱批次</h3><div class="meta">每周或按需 · 衬衣、西裤/休闲裤</div></div>
+          </div>
+          <dl class="recipe">
+            <div><dt>旋钮</dt><dd>混合</dd></div>
+            <div><dt>温度</dt><dd>30℃ / 蒸汽时40℃</dd></div>
+            <div><dt>脱水</dt><dd>1200转</dd></div>
+            <div><dt>模式</dt><dd>洗涤＋烘干</dd></div>
+          </dl>
+          <ol class="steps">
+            <li>检查口袋，拉好拉链，解开衬衣纽扣。</li>
+            <li>1颗凝珠先放滚筒最里面，再放衣物；衣量不要多。</li>
+            <li>“混合”程序先按“模式”切到洗涤＋烘干；烘干程度会固定为储藏干，不能另选。</li>
+            <li>早晨06:30装衣，按“预约”使总显示时间接近约14小时。</li>
+            <li>20:30回家立即取出、抖开、挂起。</li>
+          </ol>
+          <p class="tip warning">蒸汽是可选项，不是防皱必选项。想用时选择40℃后再按“蒸汽”，程序会增加约30分钟；预约总时间仍以屏幕最终显示为准。</p>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <span class="num">2</span>
+            <div><h3>浴巾</h3><div class="meta">最好2条一起，或加入同色棉毛巾</div></div>
+          </div>
+          <dl class="recipe">
+            <div><dt>旋钮</dt><dd>棉麻</dd></div>
+            <div><dt>温度</dt><dd>40℃</dd></div>
+            <div><dt>模式</dt><dd>洗涤＋烘干</dd></div>
+            <div><dt>烘干</dt><dd>额外烘干</dd></div>
+          </dl>
+          <ol class="steps">
+            <li>1颗凝珠先放滚筒，再放浴巾。</li>
+            <li>选择棉麻、40℃、洗涤＋烘干、额外烘干。</li>
+            <li>浴巾不怕皱，可直接启动或预约提前完成；20:30回家取出。</li>
+            <li>检查门封圈和筒内有无毛屑。</li>
+          </ol>
+          <p class="tip warning">只有1条浴巾时尽量等同类毛巾一起洗，单件厚重衣物可能造成脱水不平衡。</p>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <span class="num">3</span>
+            <div><h3>袜子</h3><div class="meta">每天换 · 晾干后单独积攒5双</div></div>
+          </div>
+          <dl class="recipe">
+            <div><dt>旋钮</dt><dd>棉麻</dd></div>
+            <div><dt>温度</dt><dd>平时40℃ / 脚气期60℃*</dd></div>
+            <div><dt>模式</dt><dd>洗涤＋烘干</dd></div>
+            <div><dt>烘干</dt><dd>储藏干</dd></div>
+          </dl>
+          <ol class="steps">
+            <li>汗湿袜子先完全晾干，再放进透气篮；洗时装网袋。</li>
+            <li>平时：1颗凝珠，40℃正常洗烘，不加消毒液。</li>
+            <li>脚气发作：先在盆中用<strong>1瓶盖消毒液＋约2.08升水</strong>浸泡5分钟。</li>
+            <li>取出袜子后正常洗；袜子标签允许时选60℃。</li>
+            <li>袜子不怕皱，可直接启动或预约提前完成；20:30回家取出。</li>
+          </ol>
+          <p class="tip warning">* 不要把浸泡液倒入机器。反复脚气还需规范治疗、保持趾缝和鞋内干燥。</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">容易按错的地方</h2>
+      <div class="do-not">
+        <div><strong>凝珠：</strong>放滚筒最里面，不要放进洗涤剂抽屉；每批只用1颗。</div>
+        <div><strong>快洗15′：</strong>不要用。你的凝珠包装明确写着不适用快洗模式。</div>
+        <div><strong>蒸汽：</strong>主要用于除菌、软化和松散衣物，不等于熨烫；运动服、普通短袖不开蒸汽，衬衣和裤子可按需使用。</div>
+        <div><strong>容量：</strong>洗烘连续运行时按5kg烘干上限，不按8kg洗涤上限装衣服。</div>
+      </div>
+
+      <details>
+        <summary>衣服为什么还是会皱？</summary>
+        <div class="inside">
+          <p>机器烘干结束后只有约10分钟防皱翻滚。减少褶皱最有效的做法是少装、不过度烘干，并在结束后立刻取出、抖开、挂好。蒸汽功能不能代替熨斗。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>提前完成，衣服在筒内放几小时怎么办？</summary>
+        <div class="inside">
+          <p>袜子、运动服、浴巾如果已经完全干燥，回家取出即可。若仍潮湿或有闷味，重新选择适合衣物的短时烘干或重新漂洗，不要直接收进衣柜。衬衣、西裤不要这样安排，应预约到接近20:30完成。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>预约时间怎么算？</summary>
+        <div class="inside">
+          <p>你从06:30到20:30共有约14小时。先选完整程序，记住屏幕显示的程序时长；需要预约的小时数≈14小时－程序时长。机器实际时间会因衣量和含水量调整，第一次使用后再根据实际完成时间增减1小时。</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>脚气预防不只靠洗袜子</summary>
+        <div class="inside">
+          <ul>
+            <li>每天换袜，运动后洗脚并彻底擦干趾缝。</li>
+            <li>鞋子轮换穿，让鞋内充分干燥。</li>
+            <li>公共浴室、更衣室穿拖鞋，不与他人共用鞋袜和毛巾。</li>
+            <li>持续脱皮、发痒、裂口或累及趾甲时，咨询药师或皮肤科。</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <p class="footer"><span class="pill">本地速查</span> 根据设备 EWW8024D3WB、现有凝珠与消毒液整理。衣物护理标签优先于本页建议。</p>
+  </main>
+</body>
+</html>
