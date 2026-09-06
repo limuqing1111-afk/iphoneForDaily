@@ -108,6 +108,15 @@
     .budget-advice strong { display:block; margin-top:3px; font-size:18px; }
     .budget-advice p { margin:5px 0 0; color:#cbd0c8; font-size:13px; }
     .formula { margin-top:12px; color:var(--muted); font-size:13px; }
+    .emergency-panel { padding:24px; border:2px solid #e7c9a0; }
+    .emergency-panel h2 { margin-bottom:5px; }
+    .emergency-panel > p { margin:0; color:var(--muted); }
+    .emergency-controls { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:18px; }
+    .emergency-results { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:14px; }
+    .emergency-result { padding:16px; border-radius:15px; background:#f4f3ee; }
+    .emergency-result span { color:var(--muted); font-size:12px; font-weight:800; letter-spacing:.08em; }
+    .emergency-result strong { display:block; margin-top:5px; font-size:16px; line-height:1.45; }
+    .emergency-alert { margin-top:14px; padding:14px 16px; border-radius:13px; background:var(--red-soft); color:#744b46; font-weight:700; }
     .target-table,.food-table { width:100%; min-width:0; border-collapse:collapse; background:transparent; }
     .target-table th,.target-table td,.food-table th,.food-table td { white-space:normal; }
     .target-table tr.recommended td { background:var(--green-soft); font-weight:700; }
@@ -129,7 +138,7 @@
     footer { color:var(--muted); font-size:12px; margin-top:30px; padding:14px 2px; }
     footer a { color:var(--green); }
     @media (max-width:760px) {
-      .grid,.matrix,.supplements,.quick-questions,.quick-results,.budget-result,.bomb-grid { grid-template-columns:1fr; }
+      .grid,.matrix,.supplements,.quick-questions,.quick-results,.budget-result,.bomb-grid,.emergency-controls,.emergency-results { grid-template-columns:1fr; }
       .calorie-head { display:block; }
       .calorie-target-wrap { margin-top:14px; min-width:0; }
       .calorie-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -228,6 +237,39 @@
       <div class="formula">计算：今日目标 − 早餐 − 午餐 − 下午加餐＝晚餐前剩余。输入实际晚餐后，会显示全天估算总热量。</div>
     </section>
 
+    <section id="emergency-panel" class="card emergency-panel">
+      <h2>大餐／饮酒应急决策</h2>
+      <p>先在上方填写今天的热量，再选择下面 3 项；结果会自动结合“今天是否力量训练”。</p>
+      <div class="emergency-controls">
+        <label>饮酒状态
+          <select id="alcohol-state">
+            <option value="none">没喝酒</option>
+            <option value="sober">少量饮酒，已完全清醒</option>
+            <option value="unsafe">喝得较多或仍头晕、恶心、心跳异常</option>
+          </select>
+        </label>
+        <label>距离大餐结束
+          <select id="meal-gap">
+            <option value="lt3">不足 3 小时</option>
+            <option value="3to4">3～4 小时</option>
+            <option value="gt4" selected>超过 4 小时</option>
+          </select>
+        </label>
+        <label>今天蛋白质
+          <select id="protein-state">
+            <option value="enough">基本充足</option>
+            <option value="low">明显不足</option>
+          </select>
+        </label>
+      </div>
+      <div class="emergency-results" aria-live="polite">
+        <div class="emergency-result"><span>今晚运动</span><strong id="emergency-exercise">正在判断</strong></div>
+        <div class="emergency-result"><span>运动前</span><strong id="emergency-before">正在判断</strong></div>
+        <div class="emergency-result"><span>运动后／晚餐</span><strong id="emergency-after">正在判断</strong></div>
+      </div>
+      <div class="emergency-alert">大餐后不要用高强度无氧或HIIT惩罚性补偿。单次超标允许存在，第二天恢复原计划，不绝食、不连续加练。</div>
+    </section>
+
     <details class="details-box">
       <summary>查看详细方案与历史记录</summary>
 
@@ -240,10 +282,10 @@
     </div>
 
     <section>
-      <div class="section-head"><h2>你的热量目标怎么来的</h2><span class="hint">以 2026-08-20 体脂报告为起点</span></div>
+      <div class="section-head"><h2>热量目标怎么使用</h2><span class="hint">先执行，再按双周趋势校准</span></div>
       <article class="card">
-        <p><b>体重 82.65 kg</b> · 体脂率 23.2% · 去脂体重 63.5 kg · <b>基础代谢约 1740 kcal</b></p>
-        <p>按去脂体重计算：370＋21.6×63.5≈1742 kcal，与报告中的 1740 kcal 基本一致。结合久坐办公和当前训练安排，维持热量暂估约 2520–2700 kcal；先用约 2100 kcal 的周平均制造温和缺口，再由双周趋势校准。</p>
+        <p><b>先选择当天实际活动对应的目标</b>，完整记录早餐、午餐、加餐和晚餐。不要用单日体重或手表运动热量频繁修改目标。</p>
+        <p>连续执行两周后，再结合平均体重、腰围、训练表现和饥饿感，小幅调整每日摄入。</p>
         <div class="table-wrap">
           <table class="target-table">
             <thead><tr><th>当天实际活动</th><th>目标</th><th>执行规则</th></tr></thead>
@@ -255,7 +297,7 @@
           </table>
         </div>
         <p><b>临时取消训练：</b>当天立即把计算器切到 2000 kcal，不需要挨饿或跳过晚餐。优先去掉坚果、甜饮、额外主食和油汁，仍保留一份瘦肉或蛋白粉。</p>
-        <div class="macro">每周 3 天力量训练＋4 天非力量日时，周平均约 2086 kcal。体脂秤是起点，不是最终答案；真正的维持热量由连续两周体重、腰围和实际摄入反推。</div>
+        <div class="macro">每周 3 天力量训练＋4 天非力量日时，周平均约 2086 kcal。真正的维持热量应由连续两周体重、腰围和实际摄入趋势反推。</div>
       </article>
     </section>
 
@@ -498,7 +540,7 @@
       <article class="card">
         <form id="daily-form">
           <label>日期<input id="date" type="date" required></label>
-          <label>体重 kg<input id="weight" type="number" step="0.1" min="40" max="200" placeholder="82.0"></label>
+          <label>体重 kg<input id="weight" type="number" step="0.1" min="40" max="200" placeholder="例如 70.0"></label>
           <label>当天类型<select id="training"><option value="T">T · 力量训练</option><option value="R">R · 非力量日</option></select></label>
           <label>午餐判断<select id="lunch"><option value="N">N · 正常健康</option><option value="H">H · 吃多或很油</option></select></label>
           <label>早餐<select id="breakfast"><option value="✓">✓ · 蛋白达标</option><option value="△">△ · 蛋白不足</option></select></label>
@@ -524,12 +566,10 @@
     </section>
 
     <section>
-      <div class="section-head"><h2>固定补剂</h2><span class="hint">避免重复叠加</span></div>
-      <div class="supplements">
-        <article class="card"><b>鱼油</b><span>每日 1 粒，EPA 690 mg＋DHA 310 mg，随早餐或午餐。</span></article>
-        <article class="card"><b>复合维生素</b><span>按标签每日 4 粒，可早餐 2 粒、晚餐 2 粒。</span></article>
-        <article class="card"><b>暂不叠加</b><span>单独 D3＋K2 和镁暂停；Tebonin 仅按医疗建议。</span></article>
-      </div>
+      <div class="section-head"><h2>补剂原则</h2><span class="hint">公开版不包含个人剂量</span></div>
+      <article class="card">
+        <p>食物优先；补剂按产品标签及医生或营养师建议使用，注意不同产品之间成分重复。</p>
+      </article>
     </section>
 
     <footer>记录重点：早餐蛋白是否达标、午餐是否吃多、晚餐是否按规则收回来。每天称重，只看 7 天平均趋势。热量目标参考 <a href="https://www.niddk.nih.gov/bwp" target="_blank" rel="noreferrer">NIH Body Weight Planner</a>；本页用于日常管理，不能替代医生或营养师针对疾病、药物和化验结果的建议。</footer>
@@ -624,6 +664,60 @@
       $('record-calorie-summary').textContent = dinner > 0
         ? `热量记录：目标 ${target} kcal · 全天估算 ${total} kcal · 相差 ${target - total} kcal`
         : `热量记录：目标 ${target} kcal · 晚餐前已计 ${beforeDinner} kcal`;
+      updateEmergencyPlan();
+    }
+
+    function updateEmergencyPlan() {
+      const alcohol = $('alcohol-state').value;
+      const mealGap = $('meal-gap').value;
+      const protein = $('protein-state').value;
+      const training = document.querySelector('input[name="quick-training"]:checked').value;
+      const target = calorieValue('calorie-target');
+      const beforeDinner = calorieValue('breakfast-calories') + calorieValue('lunch-calories') + calorieValue('snack-calories');
+      const nearOrOverTarget = beforeDinner >= target - 200;
+      const lowIntake = beforeDinner <= target - 500;
+
+      let exercise;
+      if (alcohol === 'unsafe') {
+        exercise = '今晚不训练：补水、休息；症状明显或持续时及时就医。';
+      } else if (mealGap === 'lt3') {
+        exercise = '只轻松步行 10～20 分钟，不跑步、不力量训练。';
+      } else if (alcohol === 'sober') {
+        exercise = '确认完全清醒且无不适后，中等强度有氧 30～45 分钟；不做力量或 HIIT。';
+      } else if (training === 'T') {
+        exercise = '按原计划做力量训练，不额外加组、不练到力竭。';
+      } else if (nearOrOverTarget) {
+        exercise = '中等强度有氧 30～45 分钟；它是正常活动，不是把热量“抵消掉”。';
+      } else {
+        exercise = '休息或轻松活动即可，无需为了热量临时加练。';
+      }
+
+      let before;
+      if (alcohol === 'unsafe') {
+        before = '不补香蕉或燕麦；小口补水，先观察身体状态。';
+      } else if (nearOrOverTarget) {
+        before = '只喝水，不补香蕉、燕麦或含糖饮料。';
+      } else if (lowIntake && mealGap === 'gt4' && training === 'T') {
+        before = '训练前可吃半根香蕉并喝水；不需要燕麦。';
+      } else {
+        before = '喝水即可；没有明显饥饿就不加餐。';
+      }
+
+      let after;
+      if (alcohol === 'unsafe') {
+        after = protein === 'low'
+          ? '先补水休息；完全清醒、胃舒服后，蛋白不足可用水冲蛋白粉 1 勺。'
+          : '先补水休息；不饿就不再吃。';
+      } else if (protein === 'low') {
+        after = '蛋白粉 1 勺用水冲；若仍明显饥饿，改为燕麦 35 g＋半勺蛋白粉。';
+      } else {
+        after = '只喝水；不饿不再吃。若明显饥饿，燕麦 35 g＋半勺蛋白粉。';
+      }
+      after += ' 不加坚果、牛奶、甜饮料或额外水果。';
+
+      $('emergency-exercise').textContent = exercise;
+      $('emergency-before').textContent = before;
+      $('emergency-after').textContent = after;
     }
 
     async function copyText(text, statusId) {
@@ -682,6 +776,7 @@
     document.querySelectorAll('input[name="quick-training"]').forEach(input => input.addEventListener('change', () => updateQuickDecision(true)));
     document.querySelectorAll('input[name="quick-lunch"]').forEach(input => input.addEventListener('change', () => updateQuickDecision(false)));
     Object.values(CALORIE_FIELDS).forEach(id => $(id).addEventListener('input', updateCalorieBudget));
+    ['alcohol-state','meal-gap','protein-state'].forEach(id => $(id).addEventListener('change', updateEmergencyPlan));
     $('breakfast-preset').addEventListener('change', () => {
       if ($('breakfast-preset').value) $('breakfast-calories').value = $('breakfast-preset').value;
       updateCalorieBudget();
