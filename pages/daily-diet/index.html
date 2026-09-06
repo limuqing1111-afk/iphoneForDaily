@@ -93,6 +93,32 @@
     .result-card h3 { margin:5px 0 6px; font-size:20px; }
     .result-card p { margin:0; color:var(--muted); }
     .result-card.dinner p { color:#cbd0c8; }
+    .calorie-panel { padding:24px; }
+    .calorie-head { display:flex; justify-content:space-between; gap:14px; align-items:start; }
+    .calorie-head p { margin:5px 0 0; color:var(--muted); }
+    .calorie-target-wrap { min-width:220px; }
+    .calorie-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-top:18px; }
+    .calorie-grid input,.calorie-grid select { font-weight:700; }
+    .budget-result { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
+    .budget-number,.budget-advice { border-radius:15px; padding:16px 18px; }
+    .budget-number { background:var(--green-soft); color:var(--green); }
+    .budget-number strong { display:block; font-size:30px; line-height:1.15; }
+    .budget-number span,.budget-advice span { font-size:12px; font-weight:800; letter-spacing:.08em; }
+    .budget-advice { background:#242823; color:white; }
+    .budget-advice strong { display:block; margin-top:3px; font-size:18px; }
+    .budget-advice p { margin:5px 0 0; color:#cbd0c8; font-size:13px; }
+    .formula { margin-top:12px; color:var(--muted); font-size:13px; }
+    .target-table,.food-table { width:100%; min-width:0; border-collapse:collapse; background:transparent; }
+    .target-table th,.target-table td,.food-table th,.food-table td { white-space:normal; }
+    .target-table tr.recommended td { background:var(--green-soft); font-weight:700; }
+    .copy-box { margin-top:12px; padding:14px; border-radius:13px; background:#f2f0e9; color:#454b44; white-space:pre-wrap; font-size:13px; }
+    .copy-button { width:auto; margin-top:10px; padding:9px 14px; background:var(--green); border-color:var(--green); color:white; }
+    .copy-status { margin-left:8px; color:var(--green); font-size:12px; }
+    .bomb-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .bomb { background:var(--red-soft); border-color:#e8c9c4; }
+    .bomb b { display:block; color:var(--red); }
+    .bomb span { color:#744b46; font-size:13px; }
+    .review-template { width:100%; min-height:330px; margin-top:12px; color:#384039; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; }
     .details-box { margin-top:24px; }
     .details-box > summary {
       cursor:pointer; list-style:none; padding:15px 18px; border:1px solid var(--line);
@@ -101,14 +127,19 @@
     .details-box > summary::-webkit-details-marker { display:none; }
     .details-box[open] > summary { background:var(--green-soft); color:var(--green); }
     footer { color:var(--muted); font-size:12px; margin-top:30px; padding:14px 2px; }
+    footer a { color:var(--green); }
     @media (max-width:760px) {
-      .grid,.matrix,.supplements,.quick-questions,.quick-results { grid-template-columns:1fr; }
+      .grid,.matrix,.supplements,.quick-questions,.quick-results,.budget-result,.bomb-grid { grid-template-columns:1fr; }
+      .calorie-head { display:block; }
+      .calorie-target-wrap { margin-top:14px; min-width:0; }
+      .calorie-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
       form { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .span4 { grid-column:1/-1; }
       .verdict { grid-template-columns:1fr; }
     }
     @media (max-width:470px) {
       form { grid-template-columns:1fr; }
+      .calorie-grid { grid-template-columns:1fr 1fr; }
       .span2,.span4 { grid-column:1; }
       .wrap { width:min(100% - 18px,1060px); padding-top:18px; }
       .card { padding:17px; }
@@ -162,6 +193,41 @@
       </div>
     </section>
 
+    <section id="calorie-calculator" class="card calorie-panel">
+      <div class="calorie-head">
+        <div>
+          <h2>今天还能吃多少？</h2>
+          <p>全天平均目标约 2100 kcal；当天是否真的训练，决定今天采用哪个上限。</p>
+        </div>
+        <label class="calorie-target-wrap">今天的热量目标
+          <select id="calorie-target">
+            <option value="2200">2200 kcal · 已完成力量训练</option>
+            <option value="2100">2100 kcal · 只游泳 ≥30分钟</option>
+            <option value="2000">2000 kcal · 无训练 / 临时取消</option>
+          </select>
+        </label>
+      </div>
+      <div class="calorie-grid">
+        <label>早餐预设
+          <select id="breakfast-preset">
+            <option value="">手动输入</option>
+            <option value="510">训练日组合 · 约510</option>
+            <option value="420">非训练日组合 · 约420</option>
+            <option value="510">中式组合 · 约510</option>
+          </select>
+        </label>
+        <label>早餐 kcal<input id="breakfast-calories" type="number" min="0" max="1500" step="10" placeholder="例如 500"></label>
+        <label>午餐 kcal<input id="lunch-calories" type="number" min="0" max="2500" step="10" placeholder="照片估算中值"></label>
+        <label>下午/零食 kcal<input id="snack-calories" type="number" min="0" max="1500" step="10" placeholder="没有就填 0"></label>
+        <label>实际晚餐 kcal<input id="dinner-calories" type="number" min="0" max="2000" step="10" placeholder="吃完后填写"></label>
+      </div>
+      <div class="budget-result">
+        <div class="budget-number"><span>晚餐前剩余</span><strong id="remaining-calories">2200 kcal</strong><small id="current-total">当前已计 0 kcal</small></div>
+        <div class="budget-advice"><span>晚餐建议</span><strong id="calorie-dinner-plan">先记录早餐和午餐</strong><p id="calorie-dinner-detail">剩余额度只用于选方案，不要求为了“吃满目标”额外加餐。</p></div>
+      </div>
+      <div class="formula">计算：今日目标 − 早餐 − 午餐 − 下午加餐＝晚餐前剩余。输入实际晚餐后，会显示全天估算总热量。</div>
+    </section>
+
     <details class="details-box">
       <summary>查看详细方案与历史记录</summary>
 
@@ -172,6 +238,165 @@
         <p>有约 2 小时消化时间。控制在 350–570 kcal，少油、少坚果、不辛辣；若出现反酸或胃胀，把晚餐减量或提前。</p>
       </div>
     </div>
+
+    <section>
+      <div class="section-head"><h2>你的热量目标怎么来的</h2><span class="hint">以 2026-08-20 体脂报告为起点</span></div>
+      <article class="card">
+        <p><b>体重 82.65 kg</b> · 体脂率 23.2% · 去脂体重 63.5 kg · <b>基础代谢约 1740 kcal</b></p>
+        <p>按去脂体重计算：370＋21.6×63.5≈1742 kcal，与报告中的 1740 kcal 基本一致。结合久坐办公和当前训练安排，维持热量暂估约 2520–2700 kcal；先用约 2100 kcal 的周平均制造温和缺口，再由双周趋势校准。</p>
+        <div class="table-wrap">
+          <table class="target-table">
+            <thead><tr><th>当天实际活动</th><th>目标</th><th>执行规则</th></tr></thead>
+            <tbody>
+              <tr><td>完成力量训练</td><td><b>2200 kcal</b></td><td>训练前香蕉或吐司也计入全天</td></tr>
+              <tr class="recommended"><td>只游泳 ≥30分钟</td><td><b>2100 kcal</b></td><td>不额外吃回手表显示的运动热量</td></tr>
+              <tr><td>休息 / 太忙取消训练</td><td><b>2000 kcal</b></td><td>从晚餐碳水和额外脂肪减少，蛋白质不减</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><b>临时取消训练：</b>当天立即把计算器切到 2000 kcal，不需要挨饿或跳过晚餐。优先去掉坚果、甜饮、额外主食和油汁，仍保留一份瘦肉或蛋白粉。</p>
+        <div class="macro">每周 3 天力量训练＋4 天非力量日时，周平均约 2086 kcal。体脂秤是起点，不是最终答案；真正的维持热量由连续两周体重、腰围和实际摄入反推。</div>
+      </article>
+    </section>
+
+    <section>
+      <div class="section-head"><h2>早餐如何计算</h2><span class="hint">训练前食物也算早餐</span></div>
+      <div class="grid">
+        <article class="card">
+          <span class="tag green">力量训练日 · 约510 kcal</span>
+          <h3>训练前＋自助早餐</h3>
+          <ul>
+            <li>训练前香蕉 100 g：约 90 kcal</li>
+            <li>鸡蛋 2 个：约 140 kcal</li>
+            <li>纯牛奶 250 ml：约 120 kcal</li>
+            <li>全麦吐司 2 片：约 160 kcal</li>
+          </ul>
+          <div class="macro">合计约 510 kcal，蛋白质约 25–30 g。若改成吐司＋半根香蕉，按实际相加。</div>
+        </article>
+        <article class="card">
+          <span class="tag gold">无训练日 · 约420 kcal</span>
+          <h3>正常自助早餐</h3>
+          <ul>
+            <li>鸡蛋 2 个：约 140 kcal</li>
+            <li>纯牛奶 250 ml：约 120 kcal</li>
+            <li>全麦吐司 1 片：约 80 kcal</li>
+            <li>一份完整水果：约 80 kcal</li>
+          </ul>
+          <div class="macro">合计约 420 kcal。蛋白质不减，只比力量日少一份碳水。</div>
+        </article>
+      </div>
+      <article class="card" style="margin-top:14px">
+        <h3>自助餐常见食物速算</h3>
+        <div class="table-wrap">
+          <table class="food-table">
+            <thead><tr><th>食物</th><th>一份</th><th>估算热量</th><th>注意</th></tr></thead>
+            <tbody>
+              <tr><td>鸡蛋</td><td>1个</td><td>约70 kcal</td><td>煎蛋另加烹调油</td></tr>
+              <tr><td>纯牛奶</td><td>250 ml</td><td>约110–160 kcal</td><td>以包装标签为准</td></tr>
+              <tr><td>无糖豆浆</td><td>250 ml</td><td>约80–120 kcal</td><td>加糖版明显更高</td></tr>
+              <tr><td>吐司</td><td>1片</td><td>约70–100 kcal</td><td>黄油、果酱另算</td></tr>
+              <tr><td>馒头</td><td>中等1个</td><td>约180–250 kcal</td><td>大小差异很大</td></tr>
+              <tr><td>白粥</td><td>1碗</td><td>约80–150 kcal</td><td>饱腹和蛋白较低</td></tr>
+              <tr><td>油条</td><td>1根</td><td>约250–350 kcal</td><td>高油，尽量不作为日常</td></tr>
+              <tr><td>香蕉</td><td>可食部100 g</td><td>约90 kcal</td><td>训练前适合</td></tr>
+              <tr><td>坚果</td><td>15 g</td><td>约85–100 kcal</td><td>必须称量，不抓一大把</td></tr>
+              <tr><td>蛋白粉</td><td>1勺</td><td>约100–130 kcal</td><td>按产品标签记录</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section>
+      <div class="section-head"><h2>外食拍照怎么估算</h2><span class="hint">记录区间，不假装精确</span></div>
+      <div class="grid">
+        <article class="card">
+          <h3>拍照时这样做</h3>
+          <ul>
+            <li>先拍一张正上方全盘照，再拍一张侧面照。</li>
+            <li>让餐盘、饭碗和手掌同时入镜，方便判断尺寸。</li>
+            <li>饮料、蘸料、汤汁、加餐全部放进照片。</li>
+            <li>吃剩的部分再拍一张，按实际吃掉的比例计算。</li>
+            <li>炒菜看不出用了多少油，默认采用估算区间的中高值。</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>照片发给 AI 时复制这段</h3>
+          <div class="copy-box" id="photo-prompt">请估算这顿外食。先逐项识别食物和熟重，再分别给出热量低值、中值、高值，以及蛋白质估算。请单独列出米饭/面、肉类、蔬菜、烹调油、酱汁、饮料和零食。看不清的部分不要假装精确，要说明不确定性；炒菜和浓酱按可能存在隐藏油的中高值估算。最后告诉我：为了记录热量，我应该采用哪个数值。</div>
+          <button class="copy-button" id="copy-photo-prompt" type="button">复制拍照提问</button><span class="copy-status" id="photo-copy-status"></span>
+        </article>
+      </div>
+      <div class="macro">照片估算最重要的不是得到一个“精确数字”，而是持续采用相同方法。记录时优先使用中值；明显油亮、干锅、油炸或浓酱菜采用中高值。</div>
+    </section>
+
+    <section>
+      <div class="section-head"><h2>晚餐如何计算</h2><span class="hint">先算剩余，再选 A / B / C</span></div>
+      <div class="matrix">
+        <article class="card"><span class="tag green">剩余 ≥650</span><h3>A 或 B</h3><p>正常吃 500–650 kcal；不必为了吃满目标增加坚果、甜食或第二份主食。</p></article>
+        <article class="card"><span class="tag green">剩余 500–649</span><h3>A 或 B</h3><p>外食少油，或完整燕麦蛋白餐；晚餐控制在约 500–570 kcal。</p></article>
+        <article class="card"><span class="tag gold">剩余 350–499</span><h3>C · 轻燕麦蛋白餐</h3><p>控制在约 350–410 kcal，保留蛋白质，不加水果、鸡蛋和坚果。</p></article>
+        <article class="card"><span class="tag red">剩余不足350</span><h3>仍然吃 C，不完全跳餐</h3><p>当天允许略微超过目标。第二天恢复正常，不做报复性节食。</p></article>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head"><h2>热量容易爆炸的食物</h2><span class="hint">外食优先避开或减量</span></div>
+      <div class="bomb-grid">
+        <article class="card bomb"><b>干锅 / 麻辣香锅</b><span>一餐常见约 900–1600 kcal；油、酱和加工丸类会叠加。</span></article>
+        <article class="card bomb"><b>炒饭 / 炒面</b><span>一大份常见约 700–1000 kcal；主食量和炒油都高。</span></article>
+        <article class="card bomb"><b>油炸鸡排 / 酥肉</b><span>一份常见约 400–800 kcal；裹粉会额外吸油。</span></article>
+        <article class="card bomb"><b>回锅肉 / 红烧肉 / 肥牛</b><span>一盘常见约 600–1000 kcal；肥肉本身和烹调油同时增加。</span></article>
+        <article class="card bomb"><b>芝麻酱 / 花生酱 / 浓汁</b><span>两大勺就可能约 180–250 kcal；不要把汤汁全部拌饭。</span></article>
+        <article class="card bomb"><b>奶茶 / 含糖咖啡</b><span>一杯常见约 300–700 kcal；珍珠、奶盖和糖浆另加。</span></article>
+        <article class="card bomb"><b>坚果随手抓</b><span>30 g 约 170–200 kcal；每天固定称 15 g，午餐吃多则取消。</span></article>
+        <article class="card bomb"><b>糕点 / 曲奇 / 面包甜点</b><span>一份常见约 300–500 kcal，体积不大但油糖密度高。</span></article>
+        <article class="card bomb"><b>自助餐多轮取餐</b><span>每样只吃一点也会叠加。先固定一盘蛋白、蔬菜和一份主食。</span></article>
+      </div>
+      <div class="macro">以上都是外食粗略范围，份量与做法差异很大；包装食品优先看营养标签，餐馆菜用照片估算区间。</div>
+    </section>
+
+    <section>
+      <div class="section-head"><h2>每双周发给我的信息</h2><span class="hint">用真实趋势反推下一阶段热量</span></div>
+      <article class="card">
+        <p>每天晨起、如厕后、吃喝前称重。两周结束后复制下面模板，不要只发某一天的体脂秤数字。</p>
+        <textarea class="review-template" id="review-template" readonly>【双周减脂复盘】
+周期：____月____日—____月____日
+
+1. 14天晨起体重：
+第1天：  第2天：  第3天：  第4天：  第5天：  第6天：  第7天：
+第8天：  第9天：  第10天： 第11天： 第12天： 第13天： 第14天：
+
+2. 体重均值：
+前7天平均：____ kg
+后7天平均：____ kg
+
+3. 腰围（晨起、肚脐水平）：
+周期开始：____ cm
+周期结束：____ cm
+
+4. 饮食：
+14天平均摄入：____ kcal
+达到当天目标的天数：____ / 14
+蛋白质达到130 g的天数：____ / 14
+外食照片是否包含饮料、酱汁和零食：是 / 否
+
+5. 活动：
+日均步数：____
+力量训练：____ 次
+游泳：____ 次，每次约____分钟
+
+6. 恢复：
+力量表现：上升 / 基本稳定 / 明显下降
+平均睡眠：____ 小时
+饥饿程度：____ / 5
+疲劳程度：____ / 5
+
+7. 特殊情况：
+聚餐、饮酒、出差、生病、熬夜：</textarea>
+        <button class="copy-button" id="copy-review-template" type="button">复制双周模板</button><span class="copy-status" id="review-copy-status"></span>
+        <div class="macro"><b>调整规则：</b>每周下降 0.25–0.65 kg、腰围下降且力量稳定，保持当前热量；连续两周下降不足 0.4 kg且记录完整，减少 100–150 kcal或日均增加约2000步；每周下降超过0.8 kg，或力量、睡眠明显变差，增加150–200 kcal。体重不降但腰围明显下降时先不调整。</div>
+      </article>
+    </section>
 
     <section>
       <div class="section-head"><h2>两个固定变量</h2><span class="hint">先判断，再选晚餐</span></div>
@@ -281,6 +506,7 @@
           <label>坚果<select id="nuts"><option value="0">0 g</option><option value="15">15 g</option><option value="20">20 g</option></select></label>
           <label>实际晚餐<select id="dinner"><option value="A">A · 健康外食</option><option value="B">B · 完整燕麦蛋白餐</option><option value="C">C · 轻燕麦蛋白餐</option></select></label>
           <div id="recommendation" class="recommendation span4">建议晚餐：A 或 B</div>
+          <div id="record-calorie-summary" class="recommendation span4">热量记录：请在上方计算器填写早餐、午餐、加餐和晚餐</div>
           <label class="span4">备注<textarea id="note" placeholder="例如：午餐回锅肉较油；训练力量正常"></textarea></label>
           <div class="actions span4">
             <button class="primary" type="submit">保存今天</button>
@@ -290,7 +516,7 @@
         </form>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>日期</th><th>体重</th><th>T/R</th><th>早餐</th><th>午餐</th><th>晚餐</th><th>蛋白粉</th><th>坚果</th><th>备注</th></tr></thead>
+            <thead><tr><th>日期</th><th>体重</th><th>T/R</th><th>目标 kcal</th><th>总量 kcal</th><th>早餐</th><th>午餐</th><th>晚餐</th><th>蛋白粉</th><th>坚果</th><th>备注</th></tr></thead>
             <tbody id="records"></tbody>
           </table>
         </div>
@@ -306,7 +532,7 @@
       </div>
     </section>
 
-    <footer>记录重点：早餐蛋白是否达标、午餐是否吃多、晚餐是否按规则收回来。每天称重，只看 7 天平均趋势。</footer>
+    <footer>记录重点：早餐蛋白是否达标、午餐是否吃多、晚餐是否按规则收回来。每天称重，只看 7 天平均趋势。热量目标参考 <a href="https://www.niddk.nih.gov/bwp" target="_blank" rel="noreferrer">NIH Body Weight Planner</a>；本页用于日常管理，不能替代医生或营养师针对疾病、药物和化验结果的建议。</footer>
     </details>
   </main>
 
@@ -314,6 +540,13 @@
     const KEY = 'eric-diet-records-v1';
     const $ = id => document.getElementById(id);
     const fields = ['date','weight','training','lunch','breakfast','protein','nuts','dinner','note'];
+    const CALORIE_FIELDS = {
+      targetCalories:'calorie-target',
+      breakfastCalories:'breakfast-calories',
+      lunchCalories:'lunch-calories',
+      snackCalories:'snack-calories',
+      dinnerCalories:'dinner-calories'
+    };
     const QUICK = {
       TN: {
         afternoon:['不用强制加餐','如果饿，高蛋白酸奶 200 g 或坚果 15 g，二选一。'],
@@ -333,7 +566,7 @@
       }
     };
 
-    function updateQuickDecision() {
+    function updateQuickDecision(syncTarget = false) {
       const training = document.querySelector('input[name="quick-training"]:checked').value;
       const lunch = document.querySelector('input[name="quick-lunch"]:checked').value;
       const result = QUICK[training + lunch];
@@ -344,7 +577,9 @@
       $('training').value = training;
       $('lunch').value = lunch;
       if (lunch === 'H') $('dinner').value = 'C';
+      if (syncTarget) $('calorie-target').value = training === 'T' ? '2200' : '2000';
       updateRecommendation();
+      updateCalorieBudget();
     }
 
     function recommendedDinner(training, lunch) {
@@ -358,6 +593,51 @@
       if ($('lunch').value === 'H') $('dinner').value = 'C';
     }
 
+    function calorieValue(id) {
+      const value = Number($(id).value);
+      return Number.isFinite(value) && value > 0 ? value : 0;
+    }
+
+    function dinnerPlanForRemaining(remaining, mealsEntered, lunchHeavy = false) {
+      if (!mealsEntered) return ['先记录早餐和午餐','剩余额度只用于选方案，不要求为了“吃满目标”额外加餐。'];
+      if (lunchHeavy) return ['C · 午餐吃多优先','午餐已经吃多或很油，晚餐保留蛋白质并减少额外脂肪和碳水，不因账面仍有额度而放宽。'];
+      if (remaining >= 650) return ['A 或 B · 正常晚餐','吃 500–650 kcal 即可；额度较多也不要用甜食、坚果或第二份主食强行填满。'];
+      if (remaining >= 500) return ['A 或 B · 控制份量','选择少油外食，或 500–570 kcal 的完整燕麦蛋白餐。'];
+      if (remaining >= 350) return ['C · 轻燕麦蛋白餐','控制在 350–410 kcal，保留蛋白质，不加水果、鸡蛋和坚果。'];
+      return ['仍吃 C · 不完全跳餐','当天允许略微超过目标，优先保证蛋白质；第二天正常吃，不报复性节食。'];
+    }
+
+    function updateCalorieBudget() {
+      const target = calorieValue('calorie-target');
+      const breakfast = calorieValue('breakfast-calories');
+      const lunch = calorieValue('lunch-calories');
+      const snack = calorieValue('snack-calories');
+      const dinner = calorieValue('dinner-calories');
+      const beforeDinner = breakfast + lunch + snack;
+      const remaining = target - beforeDinner;
+      const total = beforeDinner + dinner;
+      const plan = dinnerPlanForRemaining(remaining, breakfast > 0 || lunch > 0, $('lunch').value === 'H');
+      $('remaining-calories').textContent = `${remaining} kcal`;
+      $('current-total').textContent = dinner > 0 ? `全天估算 ${total} kcal · 与目标相差 ${target - total} kcal` : `当前已计 ${beforeDinner} kcal`;
+      $('calorie-dinner-plan').textContent = plan[0];
+      $('calorie-dinner-detail').textContent = plan[1];
+      $('record-calorie-summary').textContent = dinner > 0
+        ? `热量记录：目标 ${target} kcal · 全天估算 ${total} kcal · 相差 ${target - total} kcal`
+        : `热量记录：目标 ${target} kcal · 晚餐前已计 ${beforeDinner} kcal`;
+    }
+
+    async function copyText(text, statusId) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const area = document.createElement('textarea');
+        area.value = text; area.style.position = 'fixed'; area.style.opacity = '0';
+        document.body.appendChild(area); area.select(); document.execCommand('copy'); area.remove();
+      }
+      $(statusId).textContent = '已复制';
+      setTimeout(() => { $(statusId).textContent = ''; }, 1800);
+    }
+
     function loadRecords() {
       try { return JSON.parse(localStorage.getItem(KEY) || '[]'); }
       catch { return []; }
@@ -369,9 +649,10 @@
       const rows = loadRecords().sort((a,b) => b.date.localeCompare(a.date));
       $('records').innerHTML = rows.length ? rows.map(r => `<tr>
         <td>${escapeHtml(r.date)}</td><td>${escapeHtml(r.weight || '—')}</td><td>${escapeHtml(r.training)}</td>
+        <td>${escapeHtml(r.targetCalories || '—')}</td><td>${escapeHtml(r.totalCalories || '—')}</td>
         <td>${escapeHtml(r.breakfast)}</td><td>${escapeHtml(r.lunch)}</td><td>${escapeHtml(r.dinner)}</td>
         <td>${escapeHtml(r.protein)}</td><td>${escapeHtml(r.nuts)} g</td><td>${escapeHtml(r.note || '')}</td>
-      </tr>`).join('') : '<tr><td class="empty" colspan="9">还没有记录，从今天开始即可。</td></tr>';
+      </tr>`).join('') : '<tr><td class="empty" colspan="11">还没有记录，从今天开始即可。</td></tr>';
     }
 
     function escapeHtml(value) {
@@ -381,15 +662,32 @@
     $('daily-form').addEventListener('submit', event => {
       event.preventDefault();
       const record = Object.fromEntries(fields.map(id => [id, $(id).value.trim()]));
+      for (const [key,id] of Object.entries(CALORIE_FIELDS)) record[key] = $(id).value.trim();
+      record.totalCalories = String(
+        calorieValue('breakfast-calories') + calorieValue('lunch-calories') +
+        calorieValue('snack-calories') + calorieValue('dinner-calories')
+      );
       const records = loadRecords().filter(r => r.date !== record.date);
       records.push(record);
       saveRecords(records);
       render();
     });
 
-    $('training').addEventListener('change', updateRecommendation);
+    $('training').addEventListener('change', () => {
+      updateRecommendation();
+      $('calorie-target').value = $('training').value === 'T' ? '2200' : '2000';
+      updateCalorieBudget();
+    });
     $('lunch').addEventListener('change', updateRecommendation);
-    document.querySelectorAll('input[name="quick-training"],input[name="quick-lunch"]').forEach(input => input.addEventListener('change', updateQuickDecision));
+    document.querySelectorAll('input[name="quick-training"]').forEach(input => input.addEventListener('change', () => updateQuickDecision(true)));
+    document.querySelectorAll('input[name="quick-lunch"]').forEach(input => input.addEventListener('change', () => updateQuickDecision(false)));
+    Object.values(CALORIE_FIELDS).forEach(id => $(id).addEventListener('input', updateCalorieBudget));
+    $('breakfast-preset').addEventListener('change', () => {
+      if ($('breakfast-preset').value) $('breakfast-calories').value = $('breakfast-preset').value;
+      updateCalorieBudget();
+    });
+    $('copy-photo-prompt').addEventListener('click', () => copyText($('photo-prompt').textContent.trim(), 'photo-copy-status'));
+    $('copy-review-template').addEventListener('click', () => copyText($('review-template').value, 'review-copy-status'));
     $('clear').addEventListener('click', () => {
       if (confirm('确定清空当前浏览器里的全部饮食记录吗？')) {
         localStorage.removeItem(KEY); render();
@@ -398,7 +696,7 @@
     $('export').addEventListener('click', () => {
       const records = loadRecords();
       if (!records.length) return alert('还没有可以导出的记录。');
-      const headers = fields;
+      const headers = [...fields, ...Object.keys(CALORIE_FIELDS), 'totalCalories'];
       const csv = [headers, ...records.map(r => headers.map(h => r[h] || ''))]
         .map(row => row.map(v => `"${String(v).replaceAll('"','""')}"`).join(','))
         .join('\n');
@@ -409,7 +707,8 @@
     });
 
     $('date').value = new Date().toISOString().slice(0,10);
-    updateQuickDecision();
+    updateQuickDecision(true);
+    updateCalorieBudget();
     render();
   </script>
 </body>

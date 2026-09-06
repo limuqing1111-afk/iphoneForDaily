@@ -1,17 +1,17 @@
 [
   {
+    "title": "每日饮食决策与记录",
+    "category": "健康",
+    "slug": "daily-diet",
+    "path": "pages/daily-diet/",
+    "updatedAt": "2026-09-06T00:07:36.679Z"
+  },
+  {
     "title": "胸背腿训练导航",
     "category": "健康",
     "slug": "workout",
     "path": "pages/workout/",
     "updatedAt": "2026-09-05T15:21:00.823Z"
-  },
-  {
-    "title": "每日饮食决策与记录",
-    "category": "健康",
-    "slug": "daily-diet",
-    "path": "pages/daily-diet/",
-    "updatedAt": "2026-09-05T15:21:00.792Z"
   },
   {
     "title": "手机速查使用说明",
