@@ -1,5 +1,12 @@
 [
   {
+    "title": "胸背腿训练导航",
+    "category": "健康",
+    "slug": "workout",
+    "path": "pages/workout/",
+    "updatedAt": "2026-09-21T05:53:09.286Z"
+  },
+  {
     "title": "洗衣洗烘速查",
     "category": "生活",
     "slug": "laundry-guide",
@@ -12,13 +19,6 @@
     "slug": "daily-diet",
     "path": "pages/daily-diet/",
     "updatedAt": "2026-09-06T10:55:47.157Z"
-  },
-  {
-    "title": "胸背腿训练导航",
-    "category": "健康",
-    "slug": "workout",
-    "path": "pages/workout/",
-    "updatedAt": "2026-09-05T15:21:00.823Z"
   },
   {
     "title": "手机速查使用说明",
